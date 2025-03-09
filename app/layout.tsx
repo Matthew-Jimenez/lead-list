@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { Roboto } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../libs/mui/theme";
 
-const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
+const montserrat = Montserrat({
+  weight: ['300', '400', '500', '700', '900'],
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-roboto',
+  variable: '--font-montserrat',
 });
 
 
@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={roboto.variable}>
+      <body className={montserrat.variable}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             {children}
