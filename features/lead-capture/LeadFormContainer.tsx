@@ -1,11 +1,9 @@
-// import LeadFormComponent from "./LeadFormComponent";
-
 import { put } from "@vercel/blob";
 import { LEAD_RESUME_READ_WRITE_TOKEN } from "../../envs";
 import { redirect } from "next/navigation";
+import { supabase } from "../../libs/supabase/client";
 
 const LeadFormContainer = () => {
-
     async function submitLead(formData: FormData) {
         'use server';
         const firstName = formData.get('firstName') as File;
@@ -18,6 +16,13 @@ const LeadFormContainer = () => {
             access: 'public',
             token: LEAD_RESUME_READ_WRITE_TOKEN,
         });
+
+        const { data, error } = await supabase
+            .from('lead')
+            .insert([
+                { first_name: `Hi ${Math.random()}`, resumeUrl: blob.url },
+            ])
+            .select();
 
         redirect('/success');
     }

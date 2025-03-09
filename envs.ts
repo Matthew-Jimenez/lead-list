@@ -9,3 +9,5 @@ const getEnv = (key: string, ignoreNull = false): string => {
 };
 
 export const LEAD_RESUME_READ_WRITE_TOKEN = getEnv('LEAD_RESUME_READ_WRITE_TOKEN');
+export const SUPABASE_URL = getEnv('SUPABASE_SUPABASE_URL');
+export const SUPABASE_ANON_KEY = getEnv('SUPABASE_NEXT_PUBLIC_SUPABASE_ANON_KEY');
