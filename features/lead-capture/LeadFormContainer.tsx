@@ -1,11 +1,13 @@
 import { put } from "@vercel/blob";
 import { LEAD_RESUME_READ_WRITE_TOKEN } from "../../envs";
 import { redirect } from "next/navigation";
-import { supabase } from "../../libs/supabase/client";
+import { createClient } from "../../libs/supabase/server";
 
 const LeadFormContainer = () => {
     async function submitLead(formData: FormData) {
         'use server';
+        const supabase = await createClient();
+
         const firstName = formData.get('firstName') as File;
 
         console.log('firstName', firstName);
