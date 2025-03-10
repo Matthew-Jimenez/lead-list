@@ -3,21 +3,24 @@ import { Button, Typography } from "@mui/material";
 import { createClient } from "../../libs/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { prefetchLeads } from "../api/leads/queries";
 import LeadsTableContainer from "../../features/leads-manage/LeadsTableContainer";
 
 export default async function AdminDashboard() {
+    // const queryClient = new QueryClient();
+
+    // ensure user is signed in
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser().then((res) => {
+        return res;
+    });
 
     if (error || !data?.user) {
         redirect('/admin/sign-in');
     }
-
-    const queryClient = new QueryClient();
-
-    prefetchLeads(queryClient);
+    // can not prefetch here because browser cookies have not yet been set
+    // will have to thing of another way to solve
+    // https://supabase.com/docs/guides/auth/server-side/advanced-guide FAQ
+    // prefetchLeads(queryClient);
 
     async function signOut() {
         'use server';
@@ -32,9 +35,7 @@ export default async function AdminDashboard() {
         <>
             <Typography>Welcome to dashboard</Typography>
 
-            <HydrationBoundary state={dehydrate(queryClient, hydrationOptions)} >
-                <LeadsTableContainer />
-            </HydrationBoundary>
+            <LeadsTableContainer />
 
             <Button onClick={signOut} >
                 Sign Out
@@ -43,6 +44,4 @@ export default async function AdminDashboard() {
     );
 }
 
-const hydrationOptions = {
-    shouldDehydrateQuery: () => true,
-};
+

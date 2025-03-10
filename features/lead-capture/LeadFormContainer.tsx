@@ -14,15 +14,20 @@ const LeadFormContainer = () => {
 
         const imageFile = formData.get('resume') as File;
 
-        const blob = await put(imageFile.name, imageFile, {
-            access: 'public',
-            token: LEAD_RESUME_READ_WRITE_TOKEN,
-        });
+        let blob;
+
+        if (!imageFile?.name) {
+            blob = await put(imageFile.name, imageFile, {
+                access: 'public',
+                token: LEAD_RESUME_READ_WRITE_TOKEN,
+            });
+        }
+
 
         const { data, error } = await supabase
             .from('lead')
             .insert([
-                { first_name: `Hi ${Math.random()}`, resumeUrl: blob.url },
+                { firstName: firstName, resumeUrl: blob ? blob.url : '' },
             ])
             .select();
 
@@ -35,7 +40,7 @@ const LeadFormContainer = () => {
             <input type="text" id="firstName" name="firstName" required />
 
             <label htmlFor="resume">Image</label>
-            <input type="file" id="resume" name="resume" required />
+            <input type="file" id="resume" name="resume" />
             <button>Submit</button>
         </form>
     );

@@ -15,7 +15,7 @@ export default async function AdminSignUp() {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
 
-        const { data, error } = await supabase.auth.signUp({
+        const { data } = await supabase.auth.signUp({
             email,
             password,
             // options: {

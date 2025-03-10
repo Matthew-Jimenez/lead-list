@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { leadsController } from './controller';
+import { createClient } from '../../../libs/supabase/server';
+
 
 export const GET = async function handler(request: NextRequest) {
     try {
+        const supabase = await createClient();
+
+        const user = await supabase.auth.getUser();
+
+
+        if (!user.data.user) {
+            throw new Error('User not found');
+        }
+
         const res = await leadsController();
 
         return NextResponse.json(res);

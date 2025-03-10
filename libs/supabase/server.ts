@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { SUPABASE_ANON_KEY, SUPABASE_URL } from '../../envs';
-
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../envs';
 
 export async function createClient() {
     const cookieStore = await cookies();
@@ -10,10 +9,6 @@ export async function createClient() {
         SUPABASE_URL,
         SUPABASE_ANON_KEY,
         {
-            auth: {
-                detectSessionInUrl: true,
-                flowType: 'pkce',
-            },
             cookies: {
                 getAll() {
                     return cookieStore.getAll();

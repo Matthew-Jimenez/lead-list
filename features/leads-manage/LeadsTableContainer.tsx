@@ -1,9 +1,12 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useLeads } from '../../app/api/leads/queries';
+import EnhancedTable from './LeadsTableComponent';
 
 const LeadsTableContainer = () => {
+    const [page, setPage] = useState(0);
+
     const { data, isLoading } = useLeads();
 
     if (isLoading) {
@@ -11,15 +14,7 @@ const LeadsTableContainer = () => {
     }
 
     return (
-        <div>
-            <p>LeadsTableContainer</p>
-
-            {data?.map(lead => (
-                <div key={lead.firstName}>
-                    {lead.firstName}
-                </div>
-            ))}
-        </div>
+        <EnhancedTable leads={data} page={page} setPage={setPage} />
     );
 };
 
