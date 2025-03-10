@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { leadsController } from './controller';
 import { createClient } from '../../../libs/supabase/server';
 
 
-export const GET = async function handler(request: NextRequest) {
+export const GET = async function handler() {
     try {
         const supabase = await createClient();
 
