@@ -24,8 +24,6 @@ const LeadsTableContainer = () => {
         return <p>Loading...</p>;
     }
 
-    console.log('data', data);
-
     return (
         <EnhancedTable leads={data} page={page} setPage={setPage} onToggleReachout={handleReachout} />
     );

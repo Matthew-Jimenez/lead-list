@@ -176,8 +176,8 @@ export type Params = {
 };
 
 export default function EnhancedTable({ leads, page, setPage, onToggleReachout }: Params) {
-    const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
+    const [order, setOrder] = React.useState<Order>('desc');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('createdAt');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
