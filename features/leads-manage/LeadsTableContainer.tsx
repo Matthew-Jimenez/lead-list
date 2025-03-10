@@ -9,12 +9,20 @@ const LeadsTableContainer = () => {
 
     const { data, isLoading } = useLeads();
 
+
+    const handleReachout = (id: number) => {
+        alert('reachout');
+    };
+
+
     if (isLoading) {
         return <p>Loading...</p>;
     }
 
+    console.log('data', data);
+
     return (
-        <EnhancedTable leads={data} page={page} setPage={setPage} />
+        <EnhancedTable leads={data} page={page} setPage={setPage} onToggleReachout={handleReachout} />
     );
 };
 

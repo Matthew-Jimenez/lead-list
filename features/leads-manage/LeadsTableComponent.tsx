@@ -12,6 +12,8 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
+import { Button } from '@mui/material';
+import { SwapHoriz } from '@mui/icons-material';
 
 interface Data {
     id: number;
@@ -31,9 +33,9 @@ function createData(
     return {
         id,
         name,
-        createdAt,
-        status,
         email,
+        status,
+        createdAt,
     };
 }
 
@@ -90,7 +92,7 @@ const headCells: readonly HeadCell[] = [
     },
     {
         id: 'status',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'status',
     },
@@ -130,6 +132,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                             onClick={createSortHandler(headCell.id)}
                         >
                             {headCell.label}
+
                             {orderBy === headCell.id ? (
                                 <Box component="span" sx={visuallyHidden}>
                                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -169,15 +172,18 @@ export type Params = {
     leads?: Lead[];
     page: number;
     setPage: (page: number) => void;
+    onToggleReachout: (id: number) => void;
 };
 
-export default function EnhancedTable({ leads, page, setPage }: Params) {
+export default function EnhancedTable({ leads, page, setPage, onToggleReachout }: Params) {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const rows = leads?.map(l => createData(l.id, `${l.firstName} ${l.lastName}`, l.email, l.created_at, l.status)) || [];
+    const rows = React.useMemo(() => {
+        return leads?.map(l => createData(l.id, `${l.firstName} ${l.lastName}`, l.email, l.status, l.created_at)) || [];
+    }, [leads]);
 
 
     const handleRequestSort = (
@@ -190,31 +196,16 @@ export default function EnhancedTable({ leads, page, setPage }: Params) {
     };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
+        // if (event.target.checked) {
+        //     const newSelected = rows.map((n) => n.id);
+        //     setSelected(newSelected);
+        //     return;
+        // }
+        // setSelected([]);
     };
 
     const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly number[] = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-        setSelected(newSelected);
+        onToggleReachout(id);
     };
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -241,7 +232,7 @@ export default function EnhancedTable({ leads, page, setPage }: Params) {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} />
+                {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -258,30 +249,40 @@ export default function EnhancedTable({ leads, page, setPage }: Params) {
                         />
                         <TableBody>
                             {visibleRows.map((row, index) => {
-                                const isItemSelected = selected.includes(row.id);
+                                // const isItemSelected = selected.includes(row.id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
+
+                                console.log(row);
                                 return (
                                     <TableRow
                                         hover
                                         onClick={(event) => handleClick(event, row.id)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
+                                        // aria-checked={isItemSelected}
                                         tabIndex={-1}
                                         key={row.id}
-                                        selected={isItemSelected}
+                                        // selected={isItemSelected}
                                         sx={{ cursor: 'pointer' }}
                                     >
                                         <TableCell
                                             component="th"
-                                            id={labelId}
                                             scope="row"
                                         >
                                             {row.name}
                                         </TableCell>
+
                                         <TableCell align="left">{row.email}</TableCell>
-                                        <TableCell align="left">{row.status}</TableCell>
+
                                         <TableCell align="left">{row.createdAt}</TableCell>
+
+                                        <TableCell align="left">
+                                            {row.status}
+
+                                            <Button variant='contained' disableElevation size='small' >
+                                                <SwapHoriz />
+                                            </Button>
+
+                                        </TableCell>
                                     </TableRow>
                                 );
                             })}
