@@ -4,6 +4,7 @@ import { createClient } from "../../libs/supabase/server";
 import { Box, Button, OutlinedInput } from "@mui/material";
 import InputFileUpload from "./InputFileUpload";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 
 const LeadFormContainer = () => {
@@ -35,6 +36,7 @@ const LeadFormContainer = () => {
             .select();
 
         revalidatePath('/');
+        redirect('/success');
     }
 
     return (
