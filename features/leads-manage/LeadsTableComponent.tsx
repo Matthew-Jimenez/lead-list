@@ -17,16 +17,22 @@ interface Data {
     id: number;
     name: string;
     email: string;
+    status: string;
+    createdAt: string;
 }
 
 function createData(
     id: number,
     name: string,
     email: string,
+    status: string,
+    createdAt: string
 ): Data {
     return {
         id,
         name,
+        createdAt,
+        status,
         email,
     };
 }
@@ -72,9 +78,21 @@ const headCells: readonly HeadCell[] = [
     },
     {
         id: 'email',
+        numeric: false,
+        disablePadding: true,
+        label: 'Email',
+    },
+    {
+        id: 'createdAt',
+        numeric: false,
+        disablePadding: true,
+        label: 'Submitted',
+    },
+    {
+        id: 'status',
         numeric: true,
         disablePadding: false,
-        label: 'url',
+        label: 'status',
     },
 ];
 
@@ -102,7 +120,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={'left'}
                         padding={'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -159,7 +177,7 @@ export default function EnhancedTable({ leads, page, setPage }: Params) {
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const rows = leads?.map(l => createData(l.id, l.firstName, l.resumeUrl)) || [];
+    const rows = leads?.map(l => createData(l.id, `${l.firstName} ${l.lastName}`, l.email, l.created_at, l.status)) || [];
 
 
     const handleRequestSort = (
@@ -261,7 +279,9 @@ export default function EnhancedTable({ leads, page, setPage }: Params) {
                                         >
                                             {row.name}
                                         </TableCell>
-                                        <TableCell align="right">{row.email}</TableCell>
+                                        <TableCell align="left">{row.email}</TableCell>
+                                        <TableCell align="left">{row.status}</TableCell>
+                                        <TableCell align="left">{row.createdAt}</TableCell>
                                     </TableRow>
                                 );
                             })}

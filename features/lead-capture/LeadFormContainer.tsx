@@ -1,47 +1,73 @@
 import { put } from "@vercel/blob";
 import { LEAD_RESUME_READ_WRITE_TOKEN } from "../../envs";
-import { redirect } from "next/navigation";
 import { createClient } from "../../libs/supabase/server";
+import { Box, Button, OutlinedInput } from "@mui/material";
+import InputFileUpload from "./InputFileUpload";
+import { revalidatePath } from "next/cache";
+
 
 const LeadFormContainer = () => {
     async function submitLead(formData: FormData) {
         'use server';
         const supabase = await createClient();
 
-        const firstName = formData.get('firstName') as File;
+        const firstName = formData.get('firstName') as string;
+        const lastName = formData.get('lastName') as string;
+        const email = formData.get('email') as string;
 
-        console.log('firstName', firstName);
 
         const imageFile = formData.get('resume') as File;
 
         let blob;
 
-        if (!imageFile?.name) {
+        if (imageFile?.name && imageFile?.size) {
             blob = await put(imageFile.name, imageFile, {
                 access: 'public',
                 token: LEAD_RESUME_READ_WRITE_TOKEN,
             });
         }
 
-
-        const { data, error } = await supabase
+        await supabase
             .from('lead')
             .insert([
-                { firstName: firstName, resumeUrl: blob ? blob.url : '' },
+                { firstName, lastName, email, resumeUrl: blob ? blob.url : '' },
             ])
             .select();
 
-        redirect('/success');
+        revalidatePath('/');
     }
 
     return (
-        <form action={submitLead}>
-            <label htmlFor="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" required />
+        <form style={{ width: '100%', display: 'flex', justifyContent: 'center' }} action={submitLead}>
+            <Box sx={{
+                display: 'flex', flexDirection: 'column', maxWidth: 500, width: '100%', '& > *': {
+                    marginTop: 2,
+                }
+            }}>
 
-            <label htmlFor="resume">Image</label>
-            <input type="file" id="resume" name="resume" />
-            <button>Submit</button>
+                <OutlinedInput fullWidth type="text" id="firstName" name="firstName" required placeholder="First Name" />
+                <OutlinedInput fullWidth type="text" id="lastName" name="lastName" placeholder="Last Name" />
+                <OutlinedInput fullWidth type="text" id="email" name="email" required placeholder="Email" />
+
+                <Box>
+                    <InputFileUpload
+                        id="resume" name="resume"
+                    />
+                </Box>
+
+
+                <Box width={'100%'}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        sx={{
+                            backgroundColor: '#333',
+                            ':hover': {
+                                backgroundColor: '#000',
+                            }
+                        }} variant="contained" disableElevation>Submit</Button>
+                </Box>
+            </Box>
         </form>
     );
 };
