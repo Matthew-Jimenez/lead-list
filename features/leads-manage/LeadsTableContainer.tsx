@@ -3,6 +3,7 @@
 import { memo, useState } from 'react';
 import { useLeads } from '../../app/api/leads/queries';
 import EnhancedTable from './LeadsTableComponent';
+import { useUpdateLead } from '../../app/api/leads/[id]/mutation';
 
 const LeadsTableContainer = () => {
     const [page, setPage] = useState(0);
@@ -10,8 +11,12 @@ const LeadsTableContainer = () => {
     const { data, isLoading } = useLeads();
 
 
+    const { mutate } = useUpdateLead();
+
     const handleReachout = (id: number) => {
-        alert('reachout');
+        const currentState = data?.find((lead) => lead.id === id)?.status;
+
+        mutate({ id, status: currentState === 'PENDING' ? 'REACHED_OUT' : 'PENDING' });
     };
 
 

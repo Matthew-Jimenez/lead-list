@@ -1,10 +1,4 @@
-import { fetchJson } from "../utils";
-
-export const getLeads = async () => {
-    return fetchJson<Lead[]>(
-        `/api/leads`
-    );
-};
+import { fetchJson } from "../../utils";
 
 
 export const updateLead = async (id: number, status: 'PENDING' | 'REACHED_OUT') => {
